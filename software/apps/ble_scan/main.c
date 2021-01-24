@@ -6,6 +6,9 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "ble_advdata.h"
+#include "ble_gap.h"
+#include "nrf_soc.h"
 #include "simple_ble.h"
 
 #include "nrf52840dk.h"
@@ -33,7 +36,45 @@ void ble_evt_adv_report(ble_evt_t const* p_ble_evt) {
   uint8_t* adv_buf = adv_report->data.p_data; // array of up to 31 bytes of advertisement payload data
   uint16_t adv_len = adv_report->data.len; // length of advertisement payload data
 
-  printf("Received an advertisement!\n");
+  // Filter our devices by BLE address
+  if (ble_addr[5] == 0xC0 && ble_addr[4] == 0x98 && ble_addr[3] == 0xe5) {
+
+    // Print BLE address
+    printf("Adv from %X:%X:%X:%X:%X:%X  -  ", 
+            ble_addr[0], ble_addr[1], ble_addr[2], ble_addr[3], ble_addr[4], ble_addr[5]);
+
+    // Parse payload: length-type-value sets
+    uint8_t i = 0;
+    while (i < adv_len) {
+        // length
+        uint8_t len = adv_buf[i++] - 1; // -1 for the type octet
+        // type
+        uint8_t type = adv_buf[i++];
+        // value
+        switch (type) {
+          // NOTE: In each case, i must be incremented by len
+          
+          case BLE_GAP_AD_TYPE_FLAGS:                 // flags for discoverability
+            printf("Flags: %X, ", adv_buf[i++]);
+            break;
+
+          case BLE_GAP_AD_TYPE_SHORT_LOCAL_NAME:      // short/complete local device name
+          case BLE_GAP_AD_TYPE_COMPLETE_LOCAL_NAME:
+            printf("Local name: ");
+            while (len--) {
+                printf("%c", adv_buf[i++]);
+            }
+            break;
+
+          default:
+            printf("Type (0x%X): 0x", type);
+            while (len--) {
+                printf("%X", adv_buf[i++]);
+            }
+        }
+    }
+    printf("\n");
+  }
 }
 
 
