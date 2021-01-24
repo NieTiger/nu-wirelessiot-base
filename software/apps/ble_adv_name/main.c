@@ -44,4 +44,3 @@ int main(void) {
     power_manage();
   }
 }
-
