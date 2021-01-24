@@ -56,7 +56,7 @@ void ble_evt_adv_report(ble_evt_t const* p_ble_evt) {
       switch (type) {
         // NOTE: In each case, i must be incremented by len
         case BLE_GAP_AD_TYPE_FLAGS:                 // flags for discoverability
-          printf("Flags: %X, ", adv_buf[i++]);
+          printf("Flags: 0x%02X, ", adv_buf[i++]);
           break;
 
         case BLE_GAP_AD_TYPE_SHORT_LOCAL_NAME:      // short/complete local device name
@@ -69,9 +69,9 @@ void ble_evt_adv_report(ble_evt_t const* p_ble_evt) {
           break;
 
         default:
-          printf("Type (0x%X): 0x", type);
+          printf("Type (0x%02X): 0x", type);
           while (len-- && i<adv_len) {
-              printf("%X", adv_buf[i++]);
+              printf("%02X", adv_buf[i++]);
           }
           printf(", ");
       }
