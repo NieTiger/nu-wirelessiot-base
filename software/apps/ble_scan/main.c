@@ -59,6 +59,14 @@ void ble_evt_adv_report(ble_evt_t const* p_ble_evt) {
           printf("Flags: 0x%02X, ", adv_buf[i++]);
           break;
 
+        case BLE_GAP_AD_TYPE_16BIT_SERVICE_UUID_COMPLETE:   // Complete list of 16-bit Service Class UUIDs
+          printf("16-bit Service Class UUIDs: 0x");
+          while (len-- && i<adv_len) {
+              printf("%02X", adv_buf[i++]);
+          }
+          printf(", ");
+          break;
+
         case BLE_GAP_AD_TYPE_SHORT_LOCAL_NAME:      // short/complete local device name
         case BLE_GAP_AD_TYPE_COMPLETE_LOCAL_NAME:
           printf("Name: ");
@@ -67,6 +75,15 @@ void ble_evt_adv_report(ble_evt_t const* p_ble_evt) {
           }
           printf(", ");
           break;
+
+        case BLE_GAP_AD_TYPE_SERVICE_DATA:          // Service Data
+          printf("Service data: ");
+          while (len-- && i<adv_len) {
+              printf("%c", adv_buf[i++]);
+          }
+          printf(", ");
+          break;
+
 
         default:
           printf("Type (0x%02X): 0x", type);
