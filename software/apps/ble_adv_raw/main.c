@@ -6,6 +6,7 @@
 #include <stdint.h>
 #include <stdio.h>
 
+#include "app_util.h"
 #include "simple_ble.h"
 
 #include "nrf52840dk.h"
@@ -37,9 +38,16 @@ int main(void) {
   simple_ble_app = simple_ble_init(&ble_config);
 
   // Start Advertising
-  uint8_t ble_data[BLE_GAP_ADV_SET_DATA_SIZE_MAX] = {0x02, 0x01, 0x06, 0x0A, 0x09, 0x43, 0x53, 0x33, 0x39, 0x37, 0x2F, 0x34, 0x39, 0x37,};
+  uint8_t ble_data_len = 3 + 8 + 3 + 4;
+  uint8_t ble_data[BLE_GAP_ADV_SET_DATA_SIZE_MAX] = {
+    0x02, 0x01, 0x06, // flags: 0x06
+    0x07, 0x09, 0x43, 0x53, 0x5f, 0x49, 0x6f, 0x54, // Complete Local Name: CS_IoT
+    0x02, 0x0A, 0x00, // TX Power Level: default 0dbm
+    0x03, 0xFF, 0xc0, 0x98, // Manufacturer Specific Data: c0:98
+  };
 
-  simple_ble_adv_raw(ble_data, 14);
+  simple_ble_adv_raw(ble_data, ble_data_len);
+
   printf("Started BLE advertisements\n");
 
   while(1) {
