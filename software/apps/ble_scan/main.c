@@ -46,32 +46,35 @@ void ble_evt_adv_report(ble_evt_t const* p_ble_evt) {
     // Parse payload: length-type-value sets
     uint8_t i = 0;
     while (i < adv_len) {
-        // length
-        uint8_t len = adv_buf[i++] - 1; // -1 for the type octet
-        // type
-        uint8_t type = adv_buf[i++];
-        // value
-        switch (type) {
-          // NOTE: In each case, i must be incremented by len
-          
-          case BLE_GAP_AD_TYPE_FLAGS:                 // flags for discoverability
-            printf("Flags: %X, ", adv_buf[i++]);
-            break;
+      // length
+      uint8_t len = adv_buf[i++] - 1; // -1 for the type octet
 
-          case BLE_GAP_AD_TYPE_SHORT_LOCAL_NAME:      // short/complete local device name
-          case BLE_GAP_AD_TYPE_COMPLETE_LOCAL_NAME:
-            printf("Local name: ");
-            while (len--) {
-                printf("%c", adv_buf[i++]);
-            }
-            break;
+      // type
+      uint8_t type = adv_buf[i++];
 
-          default:
-            printf("Type (0x%X): 0x", type);
-            while (len--) {
-                printf("%X", adv_buf[i++]);
-            }
-        }
+      // value
+      switch (type) {
+        // NOTE: In each case, i must be incremented by len
+        case BLE_GAP_AD_TYPE_FLAGS:                 // flags for discoverability
+          printf("Flags: %X, ", adv_buf[i++]);
+          break;
+
+        case BLE_GAP_AD_TYPE_SHORT_LOCAL_NAME:      // short/complete local device name
+        case BLE_GAP_AD_TYPE_COMPLETE_LOCAL_NAME:
+          printf("Name: ");
+          while (len-- && i<adv_len) {
+              printf("%c", adv_buf[i++]);
+          }
+          printf(", ");
+          break;
+
+        default:
+          printf("Type (0x%X): 0x", type);
+          while (len-- && i<adv_len) {
+              printf("%X", adv_buf[i++]);
+          }
+          printf(", ");
+      }
     }
     printf("\n");
   }
