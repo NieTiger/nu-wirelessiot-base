@@ -87,15 +87,15 @@ void ble_evt_write(ble_evt_t const* p_ble_evt) {
 
 static inline void handle_button(const int button, bool *button_state, int button_i) {
   if (nrf_gpio_pin_read(button)) {
-    if (*button_state) {
-      printf("Button %d released\n", button_i);
-    }
+    // if (*button_state) {
+      // printf("Button %d released\n", button_i);
+    // }
     *button_state = false;
   } else {
     if (!*button_state) {
       printf("Button %d pressed\n", button_i);
-      simple_ble_notify_char(&button_state_char);
       button_val = button_i;
+      simple_ble_notify_char(&button_state_char);
     }
     *button_state = true;
   }
